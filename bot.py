@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # connecting to the MongoDB server, then the database, then the collection.
-cluster = MongoClient(os.getenv("CONNECTION_URL"))
+cluster = MongoClient(os.environ.get("CONNECTION_URL"))
 db = cluster["user_data"]
 collection = db["user_birthdays"]
 
@@ -72,4 +72,4 @@ async def on_message(msg):
                 collection.find_one_and_delete({"_id": msg.author.id})
 
 
-client.run(os.getenv("TOKEN"))
+client.run(os.environ.get("TOKEN"))
