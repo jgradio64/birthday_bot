@@ -52,12 +52,12 @@ async def on_message(msg):
             # if there is not a preexisting result in the database by that user
             if collection.count_documents(my_query) == 0:
                 date = re.findall("([0-9]{2})", msg.content)
-                bday_month = date[0]
-                bday_date = date[1]
-                bday = {"_id": msg.author.id, "user": msg.author.name, "month": bday_month, "day": bday_date}
+                birthday_month = date[0]
+                birthday_date = date[1]
+                birthday = {"_id": msg.author.id, "user": msg.author.name, "month": birthday_month, "day": birthday_date}
                 await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
-                collection.insert_one(bday)
-                await msg.channel.send(f'I\'ll send you a birthday wish on {bday_month}-{bday_date}!')
+                collection.insert_one(birthday)
+                await msg.channel.send(f'I\'ll send you a birthday wish on {birthday_month}-{birthday_date}!')
             else:
                 # if there is a preexisting result in the database by that user.
                 await msg.channel.send("Your birthday is already recorded.")
@@ -68,7 +68,7 @@ async def on_message(msg):
                 await msg.channel.send(f'No birthday was previously recorded for {msg.author.name}.')
             # if there is a preexisting result in the database by that user.
             if collection.count_documents(my_query) > 0:
-                await msg.channel.send(f'Working on this feature.')
+                await msg.channel.send(f'{msg.author.name}\'s birthday has been removed from the database.')
                 collection.find_one_and_delete({"_id": msg.author.id})
 
 
