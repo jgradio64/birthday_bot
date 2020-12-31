@@ -37,8 +37,8 @@ async def on_message(msg):
             if collection.count_documents(query) == 0:
                 await msg.channel.send('There are no birthdays today. :weary:')
         if msg.content.startswith('$add_my_bday:'):
-            myQuery = {"_id": msg.author.id}
-            if collection.count_documents(myQuery) == 0:
+            my_query = {"_id": msg.author.id}
+            if collection.count_documents(my_query) == 0:
                 date = re.findall("([0-9]{2})", msg.content)
                 bday_month = date[0]
                 bday_date = date[1]
@@ -49,10 +49,10 @@ async def on_message(msg):
             else:
                 await msg.channel.send("Your birthday is already recorded.")
         if msg.content.startswith('$remove_my_bday'):
-            myQuery = {"_id": msg.author.id}
-            if collection.count_documents(myQuery) == 0:
+            my_query = {"_id": msg.author.id}
+            if collection.count_documents(my_query) == 0:
                 await msg.channel.send(f'No birthday was previously recorded for {msg.author.name}.')
-            if collection.count_documents(myQuery) > 0:
+            if collection.count_documents(my_query) > 0:
                 await msg.channel.send(f'Sorry {msg.author.name}, I\'m still working on this feature.')
 
 client.run(os.getenv("TOKEN"))
