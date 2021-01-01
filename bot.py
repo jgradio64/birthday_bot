@@ -52,6 +52,30 @@ async def bot_help(msg):
                            '\tExample: "$remove_my_bday"\n')
 
 
+# Function to check if there are birthdays on the date that this is called.
+async def check_birthdays(msg):
+    # Set values to check for in the database
+    my_query = {"month": today.month, "day": today.day}
+    # check the number of birthdays recorded in the database
+    number_of_birthdays = collection.count_documents(my_query)
+    # if there are no birthdays
+    if number_of_birthdays == 0:
+        await msg.channel.send('There are no birthdays today. :weary:')
+        print(collection.find(my_query))
+    # If birthdays were found
+    if number_of_birthdays != 0:
+        # Get the birthdays from the database.
+        list_of_birthdays = collection.find(my_query)
+        if number_of_birthdays == 1:
+            await msg.channel.send(f'There is {number_of_birthdays} birthday today!')
+        else:
+            await msg.channel.send(f'There are {number_of_birthdays} birthdays today!')
+        # Loop through the birthdays wishing happy birthday to everyone!
+        for birthday in list_of_birthdays:
+            await msg.channel.send("Happy birthday " + birthday['user'] + "!!!")
+
+
+
 # Checks to see if the month is within the range of possible selections
 def check_month(month):
     month_range = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -79,25 +103,7 @@ async def on_message(msg):
         if msg.content.startswith('$how?'):
             await bot_help(msg)
         if msg.content.startswith('$check_bdays'):
-            # Set values to check for in the database
-            my_query = {"month": today.month, "day": today.day}
-            # check the number of birthdays recorded in the database
-            number_of_birthdays = collection.count_documents(my_query)
-            # if there are no birthdays
-            if number_of_birthdays == 0:
-                await msg.channel.send('There are no birthdays today. :weary:')
-                print(collection.find(my_query))
-            # If birthdays were found
-            if number_of_birthdays != 0:
-                # Get the birthdays from the database.
-                list_of_birthdays = collection.find(my_query)
-                if number_of_birthdays == 1:
-                    await msg.channel.send(f'There is {number_of_birthdays} birthday today!')
-                else:
-                    await msg.channel.send(f'There are {number_of_birthdays} birthdays today!')
-                # Loop through the birthdays wishing happy birthday to everyone!
-                for birthday in list_of_birthdays:
-                    await msg.channel.send("Happy birthday " + birthday['user'] + "!!!")
+            await check_birthdays(msg)
         if msg.content.startswith('$add_my_bday:'):
             my_query = {"_id": msg.author.id}
             # if there is not a preexisting result in the database by that user
