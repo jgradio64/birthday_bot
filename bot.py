@@ -75,6 +75,35 @@ async def check_birthdays(msg):
             await msg.channel.send("Happy birthday " + birthday['user'] + "!!!")
 
 
+async def add_birthday(msg):
+    my_query = {"_id": msg.author.id}
+    # if there is not a preexisting result in the database by that user
+    if collection.count_documents(my_query) == 0:
+        date = re.findall("([0-9]+)", msg.content)
+        # get month value, convert from str to int
+        birthday_month = int(date[0])
+        # get date value, convert from str to int
+        birthday_date = int(date[1])
+        # If the month is an acceptable month
+        if check_month(birthday_month):
+            # If the date is an acceptable value based upon the month
+            if check_date(birthday_month, birthday_date):
+                # Create Schema for the users birthday
+                birthday = create_birthday(msg.author.id, msg.author.name, birthday_month, birthday_date)
+                await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
+                # Insert the data into the Database
+                collection.insert_one(birthday)
+                await msg.channel.send(f'I\'ll send you a birthday wish on {birthday_month}-{birthday_date}!')
+            else:
+                # If the date is not an acceptable value based upon the month
+                await msg.channel.send('Please enter a DATE within the MONTH that you chose.')
+        else:
+            # If the month the user entered is not an acceptable month
+            await msg.channel.send('Please enter a number corresponding to a month from 1 to 12.')
+    else:
+        # if there is a preexisting result in the database by that user.
+        await msg.channel.send("Your birthday is already recorded.")
+
 
 # Checks to see if the month is within the range of possible selections
 def check_month(month):
@@ -105,33 +134,7 @@ async def on_message(msg):
         if msg.content.startswith('$check_bdays'):
             await check_birthdays(msg)
         if msg.content.startswith('$add_my_bday:'):
-            my_query = {"_id": msg.author.id}
-            # if there is not a preexisting result in the database by that user
-            if collection.count_documents(my_query) == 0:
-                date = re.findall("([0-9]+)", msg.content)
-                # get month value, convert from str to int
-                birthday_month = int(date[0])
-                # get date value, convert from str to int
-                birthday_date = int(date[1])
-                # If the month is an acceptable month
-                if check_month(birthday_month):
-                    # If the date is an acceptable value based upon the month
-                    if check_date(birthday_month, birthday_date):
-                        # Create Schema for the users birthday
-                        birthday = create_birthday(msg.author.id, msg.author.name, birthday_month, birthday_date)
-                        await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
-                        # Insert the data into the Database
-                        collection.insert_one(birthday)
-                        await msg.channel.send(f'I\'ll send you a birthday wish on {birthday_month}-{birthday_date}!')
-                    else:
-                        # If the date is not an acceptable value based upon the month
-                        await msg.channel.send('Please enter a DATE within the MONTH that you chose.')
-                else:
-                    # If the month the user entered is not an acceptable month
-                    await msg.channel.send('Please enter a number corresponding to a month from 1 to 12.')
-            else:
-                # if there is a preexisting result in the database by that user.
-                await msg.channel.send("Your birthday is already recorded.")
+            await add_birthday(msg)
         if msg.content.startswith('$remove_my_bday'):
             my_query = {"_id": msg.author.id}
             # if there is not a preexisting result in the database by that user
