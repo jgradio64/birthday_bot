@@ -105,6 +105,17 @@ async def add_birthday(msg):
         await msg.channel.send("Your birthday is already recorded.")
 
 
+async def remove_birthday(msg):
+    my_query = {"_id": msg.author.id}
+    # if there is not a preexisting result in the database by that user
+    if collection.count_documents(my_query) == 0:
+        await msg.channel.send(f'No birthday was previously recorded for {msg.author.name}.')
+    # if there is a preexisting result in the database by that user.
+    if collection.count_documents(my_query) > 0:
+        await msg.channel.send(f'{msg.author.name}\'s birthday has been removed from the database.')
+        collection.find_one_and_delete({"_id": msg.author.id})
+
+
 # Checks to see if the month is within the range of possible selections
 def check_month(month):
     month_range = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -119,31 +130,24 @@ async def on_ready():
 
 # When a message is sensed in the server.
 @client.event
-async def on_message(msg):
+async def on_message(message):
     # Prevents the bot from reading its own messages
-    if msg.author == client.user:
+    if message.author == client.user:
         return
     else:
-        print(f"{msg.channel}: {msg.author.id}: {msg.author.name}: {msg.content}")
+        print(f"{message.channel}: {message.author.id}: {message.author.name}: {message.content}")
         # general help tutorial. Make sure to update this properly.
-        if msg.content.startswith('I love you'):
-            await msg.channel.send('I\'m not ready for this level of commitment. :flushed:')
+        if message.content.startswith('I love you'):
+            await message.channel.send('I\'m not ready for this level of commitment. :flushed:')
         # If the user asks for help.
-        if msg.content.startswith('$how?'):
-            await bot_help(msg)
-        if msg.content.startswith('$check_bdays'):
-            await check_birthdays(msg)
-        if msg.content.startswith('$add_my_bday:'):
-            await add_birthday(msg)
-        if msg.content.startswith('$remove_my_bday'):
-            my_query = {"_id": msg.author.id}
-            # if there is not a preexisting result in the database by that user
-            if collection.count_documents(my_query) == 0:
-                await msg.channel.send(f'No birthday was previously recorded for {msg.author.name}.')
-            # if there is a preexisting result in the database by that user.
-            if collection.count_documents(my_query) > 0:
-                await msg.channel.send(f'{msg.author.name}\'s birthday has been removed from the database.')
-                collection.find_one_and_delete({"_id": msg.author.id})
+        if message.content.startswith('$how?'):
+            await bot_help(message)
+        if message.content.startswith('$check_bdays'):
+            await check_birthdays(message)
+        if message.content.startswith('$add_my_bday:'):
+            await add_birthday(message)
+        if message.content.startswith('$remove_my_bday'):
+            await remove_birthday(message)
 
 
 client.run(os.environ.get("TOKEN"))
