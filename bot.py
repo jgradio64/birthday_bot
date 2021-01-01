@@ -40,7 +40,6 @@ async def on_message(msg):
                                    'Use digits for the month and day.\n'
                                    'Example: "$add_my_bday: 11-04"\n\n\n')
             await msg.channel.send('To remove your birthday from the server use "$remove_my_bday"\n\n')
-
         if msg.content.startswith('$check_bdays'):
             my_query = {"month": f'{today.month}', "day": f'{today.day}'}
             if collection.count_documents(my_query) == 0:
@@ -57,11 +56,18 @@ async def on_message(msg):
                 date = re.findall("([0-9]{2})", msg.content)
                 birthday_month = date[0]
                 birthday_date = date[1]
-                birthday = {"_id": msg.author.id, "user": msg.author.name, "month": birthday_month,
-                            "day": birthday_date}
-                await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
-                collection.insert_one(birthday)
-                await msg.channel.send(f'I\'ll send you a birthday wish on {birthday_month}-{birthday_date}!')
+                if check_month(birthday_month):
+                    date_works = check_date(birthday_month, birthday_date)
+                    if date_works:
+                        birthday = {"_id": msg.author.id, "user": msg.author.name, "month": birthday_month,
+                                    "day": birthday_date}
+                        await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
+                        collection.insert_one(birthday)
+                        await msg.channel.send(f'I\'ll send you a birthday wish on {birthday_month}-{birthday_date}!')
+                    else:
+                        await msg.channel.send('Please enter a DATE within the MONTH that you chose.')
+                else:
+                    await msg.channel.send('Please enter a number corresponding to a month from 1 to 12.')
             else:
                 # if there is a preexisting result in the database by that user.
                 await msg.channel.send("Your birthday is already recorded.")
@@ -77,3 +83,25 @@ async def on_message(msg):
 
 
 client.run(os.environ.get("TOKEN"))
+
+
+def check_date(month, day):
+    if int(month) in [12, 10, 8, 7, 5, 3, 1]:
+        if int(day) in range(1, 31):
+            return True
+        else:
+            return False
+    elif int(month) in [4, 6, 9, 11]:
+        if int(day) in range(1, 30):
+            return True
+        else:
+            return False
+    elif int(month) == 2:
+        if int(day) in range(1, 28):
+            return True
+        else:
+            return False
+
+
+def check_month(month):
+    return int(month) in range(1, 12)
