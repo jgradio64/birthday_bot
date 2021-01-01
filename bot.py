@@ -17,7 +17,6 @@ async def on_message(message):
         return
     else:
         print(f"{message.channel}: {message.author.id}: {message.author.name}: {message.content}")
-        # general help tutorial. Make sure to update this properly.
         if message.content.startswith('I love you'):
             await message.channel.send('I\'m not ready for this level of commitment. :flushed:')
         # If the user asks for help.
@@ -29,7 +28,6 @@ async def on_message(message):
             await bot_functions.add_birthday(message)
         if message.content.startswith('$remove_my_bday'):
             await bot_functions.remove_birthday(message)
-            # await remove_birthday(message)
 
 
 client.run(os.environ.get("TOKEN"))

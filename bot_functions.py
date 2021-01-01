@@ -36,6 +36,7 @@ async def check_birthdays(msg):
             await msg.channel.send("Happy birthday " + birthday['user'] + "!!!")
 
 
+# Function to handle adding a user's birthday to the database
 async def add_birthday(msg):
     my_query = {"_id": msg.author.id}
     # if there is not a preexisting result in the database by that user
@@ -65,7 +66,7 @@ async def add_birthday(msg):
         # if there is a preexisting result in the database by that user.
         await msg.channel.send("Your birthday is already recorded.")
 
-
+# Function to remove a user's birthday
 async def remove_birthday(msg):
     my_query = {"_id": msg.author.id}
     # if there is not a preexisting result in the database by that user
@@ -74,6 +75,7 @@ async def remove_birthday(msg):
     # if there is a preexisting result in the database by that user.
     if collection.count_documents(my_query) > 0:
         await msg.channel.send(f'{msg.author.name}\'s birthday has been removed from the database.')
+        # Find in the database and delete
         collection.find_one_and_delete({"_id": msg.author.id})
 
 
@@ -90,18 +92,22 @@ def create_birthday(user_id, user_name, month, date):
 
 # Checks to see if the date giving is within the acceptable range depending on the month.
 def check_date(month, day):
-    if month in [12, 10, 8, 7, 5, 3, 1]:
+    # January, March, May, July, August, October, December
+    if month in [1, 3, 5, 7, 8, 10, 12]:
         if day in range(1, 31):
             return True
         else:
             return False
+    # April, June, September, November
     elif month in [4, 6, 9, 11]:
         if day in range(1, 30):
             return True
         else:
             return False
+    # February
     elif month == 2:
         if day in range(1, 28):
             return True
         else:
             return False
+
