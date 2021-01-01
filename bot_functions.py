@@ -16,13 +16,12 @@ async def bot_help(msg):
 # Function to check if there are birthdays on the date that this is called.
 async def check_birthdays(msg):
     # Set values to check for in the database
-    my_query = {"month": today.month, "day": today.day}
+    my_query = {"guild_id": msg.guild.id, "month": today.month, "day": today.day}
     # check the number of birthdays recorded in the database
     number_of_birthdays = collection.count_documents(my_query)
     # if there are no birthdays
     if number_of_birthdays == 0:
         await msg.channel.send('There are no birthdays today. :weary:')
-        print(collection.find(my_query))
     # If birthdays were found
     if number_of_birthdays != 0:
         # Get the birthdays from the database.
@@ -33,7 +32,7 @@ async def check_birthdays(msg):
             await msg.channel.send(f'There are {number_of_birthdays} birthdays today!')
         # Loop through the birthdays wishing happy birthday to everyone!
         for birthday in list_of_birthdays:
-            await msg.channel.send("Happy birthday " + birthday['user'] + "!!!")
+            await msg.channel.send("Happy birthday " + birthday['user'] + "!!!\t")
 
 
 # Function to handle adding a user's birthday to the database
@@ -51,7 +50,7 @@ async def add_birthday(msg):
             # If the date is an acceptable value based upon the month
             if check_date(birthday_month, birthday_date):
                 # Create Schema for the users birthday
-                birthday = create_birthday(msg.author.id, msg.author.name, birthday_month, birthday_date)
+                birthday = create_birthday(msg.author.id, msg.guild.id, msg.author.name, birthday_month, birthday_date)
                 await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
                 # Insert the data into the Database
                 collection.insert_one(birthday)
@@ -65,6 +64,7 @@ async def add_birthday(msg):
     else:
         # if there is a preexisting result in the database by that user.
         await msg.channel.send("Your birthday is already recorded.")
+
 
 # Function to remove a user's birthday
 async def remove_birthday(msg):
@@ -86,8 +86,8 @@ def check_month(month):
 
 
 # Build a birthday schema based upon input.
-def create_birthday(user_id, user_name, month, date):
-    return {"_id": user_id, "user": user_name, "month": month, "day": date}
+def create_birthday(user_id, guild_id, user_name, month, date):
+    return {"_id": user_id, "guild_id": guild_id, "user": user_name, "month": month, "day": date}
 
 
 # Checks to see if the date giving is within the acceptable range depending on the month.
