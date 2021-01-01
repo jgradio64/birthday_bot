@@ -5,6 +5,7 @@ import re
 from datetime import datetime
 from pymongo import MongoClient
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # connecting to the MongoDB server, then the database, then the collection.
@@ -17,11 +18,13 @@ client = discord.Client()
 today = datetime.today()
 
 
+# On connection to discord.
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
 
 
+# When a message is sensed in the server.
 @client.event
 async def on_message(msg):
     if msg.author == client.user:
@@ -54,7 +57,8 @@ async def on_message(msg):
                 date = re.findall("([0-9]{2})", msg.content)
                 birthday_month = date[0]
                 birthday_date = date[1]
-                birthday = {"_id": msg.author.id, "user": msg.author.name, "month": birthday_month, "day": birthday_date}
+                birthday = {"_id": msg.author.id, "user": msg.author.name, "month": birthday_month,
+                            "day": birthday_date}
                 await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
                 collection.insert_one(birthday)
                 await msg.channel.send(f'I\'ll send you a birthday wish on {birthday_month}-{birthday_date}!')
