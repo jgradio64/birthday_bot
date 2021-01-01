@@ -110,4 +110,3 @@ def check_date(month, day):
             return True
         else:
             return False
-
