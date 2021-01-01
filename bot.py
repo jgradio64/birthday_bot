@@ -42,6 +42,16 @@ def check_date(month, day):
             return False
 
 
+# Bot help function
+async def bot_help(msg):
+    await msg.channel.send('To check if any one has a birthday today just type "$check_bdays"\n')
+    await msg.channel.send('To add your birthday use "$add_my_bday: Month-Day".\n'
+                           'Use digits for the month and day.\n'
+                           '\tExample: "$add_my_bday: 11-4"\n')
+    await msg.channel.send('To remove your birthday from the server use "$remove_my_bday"\n'
+                           '\tExample: "$remove_my_bday"\n')
+
+
 # Checks to see if the month is within the range of possible selections
 def check_month(month):
     month_range = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
@@ -57,6 +67,7 @@ async def on_ready():
 # When a message is sensed in the server.
 @client.event
 async def on_message(msg):
+    # Prevents the bot from reading its own messages
     if msg.author == client.user:
         return
     else:
@@ -64,13 +75,9 @@ async def on_message(msg):
         # general help tutorial. Make sure to update this properly.
         if msg.content.startswith('I love you'):
             await msg.channel.send('I\'m not ready for this level of commitment. :flushed:')
+        # If the user asks for help.
         if msg.content.startswith('$how?'):
-            await msg.channel.send('To check if any one has a birthday today just type "$check_bdays"\n')
-            await msg.channel.send('To add your birthday use "$add_my_bday: Month-Day".\n'
-                                   'Use digits for the month and day.\n'
-                                   '\tExample: "$add_my_bday: 11-4"\n')
-            await msg.channel.send('To remove your birthday from the server use "$remove_my_bday"\n'
-                                   '\tExample: "$remove_my_bday"\n')
+            await bot_help(msg)
         if msg.content.startswith('$check_bdays'):
             # Set values to check for in the database
             my_query = {"month": today.month, "day": today.day}
@@ -111,8 +118,10 @@ async def on_message(msg):
                         collection.insert_one(birthday)
                         await msg.channel.send(f'I\'ll send you a birthday wish on {birthday_month}-{birthday_date}!')
                     else:
+                        # If the date is not an acceptable value based upon the month
                         await msg.channel.send('Please enter a DATE within the MONTH that you chose.')
                 else:
+                    # If the month the user entered is not an acceptable month
                     await msg.channel.send('Please enter a number corresponding to a month from 1 to 12.')
             else:
                 # if there is a preexisting result in the database by that user.
