@@ -31,7 +31,7 @@ async def on_message(msg):
         # general help tutorial. Make sure to update this properly.
         if msg.content.startswith('I love you'):
             await msg.channel.send('I\'m not ready for this level of commitment. :flushed:')
-        if msg.content.startswith('$how??'):
+        if msg.content.startswith('$how?'):
             await msg.channel.send('To check if any one has a birthday today just type "$check_bdays"\n\n\n')
             await msg.channel.send('To add your birthday use "$add_my_bday: Month-Day".\n'
                                    'Use digits for the month and day.\n'
