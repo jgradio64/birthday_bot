@@ -13,7 +13,7 @@ This bot was build using:
 
 * Upcoming updates will include:
   * Automated checking for birthdays!
-  * Updating your birthdate without deleting the old data.
+  * ~~Updating your birthdate without deleting the old data.~~
 
 ---
 
@@ -75,4 +75,4 @@ the numerical value of the month, a dash, and then date.
 
 Example: `$update_birthday: 11-17`
 
-
+This will update the user's birthday to the date given.
