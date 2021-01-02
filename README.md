@@ -70,10 +70,9 @@ This will check the birthday's of all the members in the server who have recorde
 ---
 
 ## Updating your birthday
-A command to do this automatically will be implemented soon, but for now use the following instructions.
+Into the discord channel which the bot is added to, enter "$update_birthday:" followed by 
+the numerical value of the month, a dash, and then date.
 
-Use ```$remove_my_bday```
+Example: `$update_birthday: 11-17`
 
-Then use ```$add_my_bday: M-D```, substituting the numerical values for 
-your birth month in for "M", and the numerical values for your birthdate in for "D".
 

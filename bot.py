@@ -28,6 +28,8 @@ async def on_message(message):
             await bot_functions.add_birthday(message)
         if message.content.startswith('$remove_my_bday'):
             await bot_functions.remove_birthday(message)
+        if message.content.startswith('$update_birthday:'):
+            await bot_functions.update_birthday(message)
 
 
 client.run(os.environ.get("TOKEN"))

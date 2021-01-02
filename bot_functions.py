@@ -37,7 +37,7 @@ async def check_birthdays(msg):
 
 # Function to handle adding a user's birthday to the database
 async def add_birthday(msg):
-    my_query = {"_id": msg.author.id}
+    my_query = {"guild_id": msg.guild.id, "_id": msg.author.id}
     # if there is not a preexisting result in the database by that user
     if collection.count_documents(my_query) == 0:
         date = re.findall("([0-9]+)", msg.content)
@@ -68,15 +68,15 @@ async def add_birthday(msg):
 
 # Function to remove a user's birthday
 async def remove_birthday(msg):
-    my_query = {"_id": msg.author.id}
+    my_query = {"guild_id": msg.guild.id, "_id": msg.author.id}
     # if there is not a preexisting result in the database by that user
     if collection.count_documents(my_query) == 0:
         await msg.channel.send(f'No birthday was previously recorded for {msg.author.name}.')
     # if there is a preexisting result in the database by that user.
     if collection.count_documents(my_query) > 0:
-        await msg.channel.send(f'{msg.author.name}\'s birthday has been removed from the database.')
         # Find in the database and delete
         collection.find_one_and_delete({"_id": msg.author.id})
+        await msg.channel.send(f'{msg.author.name}\'s birthday has been removed from the database.')
 
 
 # Checks to see if the month is within the range of possible selections
@@ -110,3 +110,31 @@ def check_date(month, day):
             return True
         else:
             return False
+
+
+async def update_birthday(msg):
+    my_query = {"guild_id": msg.guild.id, "_id": msg.author.id}
+    # if there is not a preexisting result in the database by that user
+    if collection.count_documents(my_query) == 0:
+        await msg.channel.send(f'No birthday was previously recorded for {msg.author.name}.')
+        # if there is a preexisting result in the database by that user.
+    elif collection.count_documents(my_query) > 0:
+        date = re.findall("([0-9]+)", msg.content)
+        # get month value, convert from str to int
+        birthday_month = int(date[0])
+        # get date value, convert from str to int
+        birthday_date = int(date[1])
+        # If the month is an acceptable month
+        if check_month(birthday_month):
+            # If the date is an acceptable value based upon the month
+            if check_date(birthday_month, birthday_date):
+                await msg.channel.send(f'Updating your birthday, {msg.author.name}!')
+                # Insert the data into the Database
+                collection.find_one_and_update(my_query, {"$set": {"month": birthday_month, "day": birthday_date}})
+                await msg.channel.send(f'I will now send you a birthday wish on {birthday_month}-{birthday_date}!')
+            else:
+                # If the date is not an acceptable value based upon the month
+                await msg.channel.send('Please enter a DATE within the MONTH that you chose.')
+        else:
+            # If the month the user entered is not an acceptable month
+            await msg.channel.send('Please enter a number corresponding to a month from 1 to 12.')
