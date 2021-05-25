@@ -87,10 +87,16 @@ def check_month(month):
 
 # Build a birthday schema based upon input.
 def create_birthday(user_id, guild_id, user_name, month, date):
-    return {"_id": user_id, "guild_id": guild_id, "user": user_name, "month": month, "day": date}
+    return {
+        "_id": user_id,
+        "guild_id": guild_id,
+        "user": user_name,
+        "month": month,
+        "day": date
+    }
 
 
-# Checks to see if the date giving is within the acceptable range depending on the month.
+# Check if the date giving is in the date range, depending on the month.
 def check_date(month, day):
     # January, March, May, July, August, October, December
     if month in [1, 3, 5, 7, 8, 10, 12]:

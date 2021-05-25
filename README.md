@@ -13,6 +13,7 @@ This bot was build using:
 
 * Upcoming updates will include:
   * Automated checking for birthdays!
+  * Snarky replies to random phrases!
   * ~~Updating your birthdate without deleting the old data.~~
 
 ---
