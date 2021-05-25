@@ -22,7 +22,7 @@ This bot was build using:
 1. Add a discord user's birthday to a database when prompted.
 2. Remove a user's birthday from a database when prompted.
 3. Check for server users' birthdays when prompted.
-4. Provide some help to a user when prompted.
+4. Provide instructions on how to use the bot to a user, when prompted.
 
 ---
 
