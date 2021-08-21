@@ -3,7 +3,7 @@ from my_imports import *
 import re
 
 
-# Bot help function
+# Bot help function, sends a short explanation of how to use the bot to the server
 async def bot_help(msg):
     await msg.channel.send('To check if any one has a birthday today just type "$check_bdays"\n')
     await msg.channel.send('To add your birthday use "$add_my_bday: Month-Day".\n'
@@ -26,6 +26,7 @@ async def check_birthdays(msg):
     if number_of_birthdays != 0:
         # Get the birthdays from the database.
         list_of_birthdays = collection.find(my_query)
+        # Alert the channel to how many borthdays are occuring that day.
         if number_of_birthdays == 1:
             await msg.channel.send(f'There is {number_of_birthdays} birthday today!')
         else:
@@ -51,6 +52,7 @@ async def add_birthday(msg):
             if check_date(birthday_month, birthday_date):
                 # Create Schema for the users birthday
                 birthday = create_birthday(msg.author.id, msg.guild.id, msg.author.name, birthday_month, birthday_date)
+                # Alert the user that their birthday has been added.
                 await msg.channel.send(f'Adding your birthday, {msg.author.name}!')
                 # Insert the data into the Database
                 collection.insert_one(birthday)
@@ -117,7 +119,7 @@ def check_date(month, day):
         else:
             return False
 
-
+# Function to update a user's birthday.
 async def update_birthday(msg):
     my_query = {"guild_id": msg.guild.id, "_id": msg.author.id}
     # if there is not a preexisting result in the database by that user
