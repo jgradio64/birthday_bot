@@ -12,11 +12,11 @@ async def on_ready():
 # When a message is sensed in the server.
 @client.event
 async def on_message(message):
-    # Prevents the bot from reading its own messages
+    # Prevents the bot from reading its own messages by checking to see if the client is the message author
     if message.author == client.user:
         return
     else:
-        print(f"{message.channel}: {message.author.id}: {message.author.name}: {message.content}")
+        # print(f"{message.channel}: {message.author.id}: {message.author.name}: {message.content}")
         if message.content.startswith('I love you'):
             await message.channel.send(
                 'I\'m not ready for this level of commitment. :flushed:'
@@ -24,12 +24,16 @@ async def on_message(message):
         # If the user asks for help.
         if message.content.startswith('$how?'):
             await bot_functions.bot_help(message)
+        # Command to check if there are any current birthdays
         if message.content.startswith('$check_bdays'):
             await bot_functions.check_birthdays(message)
+        # Adding a user's birthday
         if message.content.startswith('$add_my_bday:'):
             await bot_functions.add_birthday(message)
+        # Removing a user's birthday
         if message.content.startswith('$remove_my_bday'):
             await bot_functions.remove_birthday(message)
+        # Updating a user's birthday
         if message.content.startswith('$update_birthday:'):
             await bot_functions.update_birthday(message)
 

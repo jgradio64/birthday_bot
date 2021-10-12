@@ -3,6 +3,11 @@ A birthday recording and wishing bot for discord!
 
 ---
 
+# Important information about the bot
+This bot is reliant upon the Discord.py package, which is [ceasing development](https://gist.github.com/Rapptz/4a2f62751b9600a31a0d3c78100287f1). Therefor this bot may become unusable in the near future. I will be working on creating a similar bot in another language, but it will not be implemented in python. I will link to the package here when it is completed.
+
+---
+
 ## About this bot
 This bot was build using:
 * Python
