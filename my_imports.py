@@ -12,6 +12,7 @@ cluster = MongoClient(f'{os.environ.get("CONNECTION_URL")}')
 db = cluster["user_data"]
 collection = db["user_birthdays"]
 
-# Initializing instances of the used objects. Also calling the function to load from .env files.
+# Initializing instances of the used objects. Also calling the function to
+# load from .env files.
 client = discord.Client()
 today = datetime.today()
